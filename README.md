@@ -1,214 +1,196 @@
 # HR Analytics: Recruitment, Performance & Attrition
 
-## 📌 Business Problem
+## Business Problem
 
 Employee attrition can increase hiring costs, create productivity gaps, and lead to the loss of trained talent.
 
-This project analyzes recruitment sources, employee performance, sales quota achievement, and attrition to answer a practical HR question:
+This project analyzes **107K+ employee records** across recruitment source, performance rating, sales quota achievement, and attrition to answer:
 
-> **What patterns in the available employee and recruitment data can help HR understand attrition and make better hiring and retention decisions?**
+> **What observable patterns in the available workforce and recruitment data can support better HR reporting, recruitment-channel evaluation, and retention monitoring?**
 
-The focus is on finding meaningful patterns while avoiding conclusions that the data cannot support.
-
----
-
-## 🎯 Key Questions
-
-The analysis focuses on four questions:
-
-1. How significant is employee attrition in the dataset?
-2. Does attrition vary across recruiting sources?
-3. How do employee performance and sales quota achievement compare across the workforce?
-4. What can HR realistically conclude from these patterns?
+The analysis is descriptive/diagnostic. It identifies patterns and associations in the available data and **does not make causal or predictive claims**.
 
 ---
 
-## 🔍 Analysis Approach
+## Business Questions
 
-The project follows a business-focused analytical workflow:
-
-**Raw Data → Data Validation → Data Cleaning → Attrition Analysis → Recruiting Source Analysis → Performance & Quota Analysis → Business Insights → HR Recommendations**
-
-### Data Preparation
-
-The `attrition` field was converted into a consistent binary outcome:
-
-* `1` → Employee left
-* `0` → Employee stayed
-
-Recruiting-source information was also reviewed for missing values rather than silently excluding those records from the analysis.
-
-This helps ensure that the comparisons are based on a consistent definition of attrition and that data-quality limitations remain visible.
+1. What is the overall observed attrition rate?
+2. How does observed attrition vary across recruiting sources?
+3. How complete is the recruiting-source data?
+4. How do performance ratings and sales quota achievement differ between employees who stayed and those who left?
+5. What HR actions can reasonably be recommended from the available evidence?
 
 ---
 
-## 📊 Key Insights
+## Analytical Workflow
 
-### 1. Recruiting source alone does not explain attrition
-
-Attrition exists across the major recruiting sources, but the differences between sources are relatively modest.
-
-This suggests that **recruiting source should not be treated as a standalone explanation for employee turnover**.
-
-A lower attrition rate for a particular source is a useful signal, but it does not prove that the source produces better long-term hires.
-
-**Business takeaway:**
-Recruitment channels should be evaluated using multiple outcomes such as retention, performance, hiring volume, time-to-fill, and hiring cost.
-
----
-
-### 2. Search Firm shows a positive signal
-
-Among the recorded recruiting sources, Search Firm shows a relatively lower observed attrition rate.
-
-However, this does not automatically make it the "best" recruitment source.
-
-The result should be treated as a signal that can be monitored and validated using additional hiring and employee outcomes.
-
-**Business takeaway:**
-HR can investigate whether this pattern continues over time before making larger recruitment investments.
+```text
+Raw Data
+   ↓
+Data Validation
+   ↓
+Data Preparation
+   ↓
+Workforce KPIs
+   ↓
+Attrition Analysis
+   ↓
+Recruitment-Source Analysis
+   ↓
+Performance & Quota Analysis
+   ↓
+Business Insights
+   ↓
+HR Recommendations
+```
 
 ---
 
-### 3. Missing recruiting-source data limits the analysis
+## Data & Data Quality
 
-A significant portion of the dataset does not contain recruiting-source information.
+The dataset contains four original fields:
 
-This makes it harder to confidently compare recruitment channels across the entire workforce.
+| Field | Description |
+|---|---|
+| `attrition` | Raw numeric attrition indicator |
+| `performance_rating` | Employee performance rating |
+| `sales_quota_pct` | Sales quota achievement in the source scale |
+| `recruiting_source` | Recorded recruitment channel |
 
-**Business takeaway:**
-Consistent recruitment-source tracking would make future hiring-channel analysis more reliable.
+### Key validation findings
 
----
+- **107,354 records** are available.
+- Duplicate rows were checked.
+- Recruiting-source information is missing for a substantial share of records.
+- The raw attrition field contains small numeric deviations around the expected 0/1 values.
+- Performance and quota fields contain values outside conventional assumptions, so they are **not silently clipped or deleted**.
+- Business definitions are required before creating additional thresholds or transformations for performance and quota.
 
-### 4. Performance and quota provide workforce context
+### Attrition standardization
 
-Performance ratings and sales quota achievement provide useful information about employee outcomes.
+The raw `attrition` field is preserved. A separate `attrition_flag` is created using a 0.5 threshold:
 
-However, these metrics should not automatically be interpreted as causes of attrition.
+- `>= 0.5` → **Left**
+- `< 0.5` → **Stayed**
 
-The analysis identifies patterns and relationships, but it does not establish causation.
+This standardized flag is used consistently for attrition-rate calculations.
 
-**Business takeaway:**
-Performance and quota should be monitored alongside attrition to understand workforce outcomes more completely.
+### Missing recruitment source
 
----
-
-## 📈 Visual Analysis
-
-The project uses focused visuals to answer specific business questions.
-
-### Attrition Rate by Recruiting Source
-
-Compares observed attrition rates across recruitment channels.
-
-**Purpose:** Identify whether certain recruiting sources show noticeably different retention outcomes.
-
----
-
-### Employee Count by Recruiting Source
-
-Shows the number of employees associated with each recruiting source.
-
-**Purpose:** Put attrition rates into sample-size context instead of looking at percentages alone.
+Missing recruiting-source values are retained as **Missing / Not Recorded** rather than removed. This keeps the data-quality issue visible and prevents the analysis from silently changing the workforce composition.
 
 ---
 
-### Performance Rating vs Sales Quota %
+## Key Business Insights
 
-Examines the relationship between employee performance ratings and sales quota achievement.
+### 1. Recruitment source is not sufficient to explain attrition
 
-**Purpose:** Understand whether stronger performance is associated with stronger quota outcomes.
+Observed attrition varies across recruiting sources, but recruitment source alone should not be treated as an explanation for employee turnover.
 
-This is interpreted as an association rather than proof of causation.
+A lower observed attrition rate for a source is a **signal to investigate**, not proof that the channel produces better long-term hires.
+
+**Business implication:** Evaluate recruitment channels using multiple outcomes such as retention, employee performance, hiring volume, time-to-fill, and cost-per-hire.
+
+### 2. Recruitment-source completeness is a major reporting issue
+
+A large portion of records has no recorded recruitment source.
+
+**Business implication:** Improving source capture and standardizing recruitment-channel categories should be a priority before making strong channel-level decisions.
+
+### 3. Performance provides workforce context
+
+Performance ratings differ between employees who stayed and those who left. These differences describe the observed workforce pattern but do not establish that performance causes or prevents attrition.
+
+**Business implication:** Performance should be monitored alongside retention and employee context rather than interpreted in isolation.
+
+### 4. Sales quota provides additional context
+
+Sales quota achievement is compared across employee status and against performance rating. Because the dataset does not provide a formal business definition of the quota field, the project retains its source scale and avoids inventing unsupported target bands.
+
+**Business implication:** Confirm the metric definition before using quota thresholds in operational HR reporting or predictive analysis.
 
 ---
 
-### Workforce KPIs
+## Visual Analysis
 
-A high-level view of:
+The notebook uses focused visuals to support specific business questions:
 
-* Total employees/records
-* Overall attrition rate
-* Average performance rating
-* Average sales quota achievement
+- Employee attrition overview
+- Observed attrition rate by recruiting source
+- Employee volume by recruiting source
+- Performance rating by employee status
+- Sales quota achievement by employee status
+- Performance rating vs. sales quota achievement
+- Correlation matrix as a directional association check
 
-**Purpose:** Provide a quick overview of the workforce before exploring individual relationships.
+The visual analysis is designed to support business interpretation rather than chart volume.
 
 ---
 
-## 💡 HR Recommendations
+## HR Recommendations
 
-### 1. Evaluate recruitment channels using multiple metrics
+### 1. Improve recruitment-source capture
 
-Recruiting sources should not be judged using attrition alone.
+Make recruitment source consistently recorded and standardize source categories.
 
-A stronger evaluation framework would consider:
+### 2. Use a recruitment-channel scorecard
+
+Evaluate channels using:
 
 **Retention + Performance + Hiring Volume + Time-to-Fill + Cost-per-Hire**
 
----
+rather than attrition alone.
 
-### 2. Improve recruitment-source data capture
+### 3. Monitor retention by employee context
 
-Recruiting source should be consistently recorded for every hire.
+Future analysis should incorporate variables such as:
 
-Better data quality would allow HR to evaluate which channels are associated with stronger long-term employee outcomes.
+- Tenure
+- Department
+- Job role
+- Manager
+- Compensation
+- Promotion history
+- Workload
+- Employee engagement
 
----
+### 4. Validate business definitions before deeper analysis
 
-### 3. Monitor promising recruitment channels
+Confirm the definitions and units of `performance_rating` and `sales_quota_pct` before creating business thresholds, benchmarks, or predictive models.
 
-Sources showing relatively lower observed attrition can be monitored over time before increasing investment.
+### 5. Build on this analysis with richer data
 
----
-
-### 4. Add employee-level factors in future analysis
-
-To better understand *why* employees leave, future analysis could incorporate:
-
-* Tenure
-* Compensation
-* Job role
-* Department
-* Manager
-* Promotion history
-* Workload
-* Employee engagement/satisfaction
-
-This would help move the analysis from identifying **where attrition occurs** toward understanding **which employee factors are associated with attrition**.
+The current dataset is appropriate for descriptive HR analytics. A richer employee-level dataset would support stronger diagnostic analysis and, after data-quality validation, potential predictive work.
 
 ---
 
-## ⚠️ Analytical Limitations
+## Analytical Limitations
 
-This analysis identifies patterns in the available data, but it does not establish causation.
+This project does **not** claim that:
 
-Therefore, the project does **not** claim that:
+- One recruiting source causes higher or lower attrition.
+- One recruitment source is definitively the best.
+- Higher performance prevents employees from leaving.
+- Higher quota achievement causes better retention.
+- Recruitment source alone can predict employee turnover.
 
-* One recruiting source causes higher attrition
-* One recruiting source is definitively the best
-* Higher performance prevents employees from leaving
-* Higher quota achievement causes better retention
-* Recruiting source alone can predict employee turnover
-
-These distinctions are important when converting analytical results into HR decisions.
+The dataset contains only four original variables, and missing recruitment-source information limits channel-level interpretation.
 
 ---
 
-## 🏁 Final Takeaway
+## Final Takeaway
 
-> **Recruiting source provides useful signals about employee retention, but it is not strong enough on its own to explain attrition. Better recruitment-source tracking and richer employee-level data can help HR make more informed hiring and retention decisions.**
-
----
-
-## 🛠️ Tools & Skills
-
-**Python | Pandas | NumPy | Matplotlib | Data Cleaning | Exploratory Data Analysis | Data Visualization | HR Analytics | Business Analysis | Insight Communication**
+> **Recruitment source provides useful signals about employee retention, but it is not strong enough on its own to explain attrition. Better recruitment-source tracking and richer employee-level data can help HR make more informed hiring and retention decisions.**
 
 ---
 
-## 📂 Project Structure
+## Tools & Skills
+
+**Python | Pandas | NumPy | Matplotlib | Seaborn | Data Cleaning | Exploratory Data Analysis | KPI Reporting | HR Analytics | Business Analysis | Insight Communication**
+
+---
+
+## Project Structure
 
 ```text
 HR-analysis/
@@ -220,30 +202,8 @@ HR-analysis/
 
 ---
 
-## 📌 Project Workflow
+## What This Project Demonstrates
 
-```text
-Raw HR Data
-     ↓
-Data Validation & Cleaning
-     ↓
-Attrition Definition
-     ↓
-Overall Attrition Analysis
-     ↓
-Recruiting Source Analysis
-     ↓
-Performance & Quota Analysis
-     ↓
-Business Insights
-     ↓
-HR Recommendations
-```
+**Data Validation → Data Preparation → KPI Analysis → Exploratory Analysis → Business Interpretation → HR Recommendations**
 
----
-
-## 👤 About the Project
-
-This project demonstrates an end-to-end approach to exploratory data analysis — starting with raw HR data, validating the data, identifying meaningful patterns, and translating those findings into practical business recommendations.
-
-The emphasis is on **business thinking, analytical accuracy, and clear communication of insights** rather than simply producing charts.
+The emphasis is on **analytical accuracy, business thinking, reproducibility, and responsible interpretation of data**.
