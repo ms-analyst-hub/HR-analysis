@@ -113,15 +113,35 @@ Sales quota achievement is compared across employee status and against performan
 
 ## Visual Analysis
 
-The notebook uses focused visuals to support specific business questions:
+The repository includes the analysis visuals below. They are generated from the project dataset and are provided as version-controlled SVG assets so they render directly on GitHub.
 
-- Employee attrition overview
-- Observed attrition rate by recruiting source
-- Employee volume by recruiting source
-- Performance rating by employee status
-- Sales quota achievement by employee status
-- Performance rating vs. sales quota achievement
-- Correlation matrix as a directional association check
+### Employee Attrition Overview
+
+![Employee Attrition Overview](visuals/attrition_overview.svg)
+
+### Observed Attrition Rate by Recruiting Source
+
+![Observed Attrition Rate by Recruiting Source](visuals/attrition_by_source.svg)
+
+### Employee Volume by Recruiting Source
+
+![Employee Volume by Recruiting Source](visuals/employee_volume_by_source.svg)
+
+### Performance Rating by Employee Status
+
+![Performance Rating by Employee Status](visuals/performance_by_status.svg)
+
+### Sales Quota Achievement by Employee Status
+
+![Sales Quota Achievement by Employee Status](visuals/quota_by_status.svg)
+
+### Performance Rating vs. Sales Quota Achievement
+
+![Performance Rating vs. Sales Quota Achievement](visuals/performance_vs_quota.svg)
+
+### Correlation Matrix
+
+![Correlation Matrix](visuals/correlation_matrix.svg)
 
 The visual analysis is designed to support business interpretation rather than chart volume.
 
@@ -197,7 +217,15 @@ HR-analysis/
 │
 ├── HR Analytics.ipynb
 ├── Recruitment_Data_updated.csv
-└── README.md
+├── README.md
+└── visuals/
+    ├── attrition_overview.svg
+    ├── attrition_by_source.svg
+    ├── employee_volume_by_source.svg
+    ├── performance_by_status.svg
+    ├── quota_by_status.svg
+    ├── performance_vs_quota.svg
+    └── correlation_matrix.svg
 ```
 
 ---
